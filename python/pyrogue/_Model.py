@@ -15,6 +15,34 @@
 #-----------------------------------------------------------------------------
 import pyrogue as pr
 import Pyro4
+import struct
+
+def from_bytes(ba,endian,signed=False):
+
+        if len(ba) < 4:
+            ba.extend(bytearray(4 - len(ba)%4))
+
+        elif len(ba) > 4 and len(ba) < 8:
+            ba.extend(bytearray(8 - len(ba)%8))
+
+        if len(ba) == 4 and signed:
+            return struct.unpack('<i', bytes(ba))[0]
+
+        elif len(ba) == 4 and not signed:
+            return struct.unpack('<I', bytes(ba))[0]
+
+        elif len(ba) == 8 and signed:
+            return struct.unpack('<q', bytes(ba))[0]
+
+        elif len(ba) == 8 and not signed:
+            return struct.unpack('<Q', bytes(ba))[0]
+        else:
+            return 0
+
+def to_bytes(value, size, endian, signed=False):
+    h = '%x' % value
+    s = ('0'*(len(h) % 2) + h).zfill(size*2).decode('hex')
+    return s if endian == 'big' else s[::-1]
 
 def wordCount(bits, wordSize):
     ret = bits // wordSize
@@ -47,7 +75,8 @@ class Model(object):
     def getMask(bitSize):
         # For now all models are little endian so we can get away with this
         i = (2**bitSize-1)
-        return i.to_bytes(byteCount(bitSize), 'little', signed=False)
+        #return i.to_bytes(byteCount(bitSize), 'little', signed=False)
+        return to_bytes(i, byteCount(bitSize), 'little', signed=False)
 
     @classmethod
     def mask(cls, ba, bitSize):
@@ -77,16 +106,17 @@ class UInt(Model):
 
     @classmethod
     def toBytes(cls, value, bitSize):
-        return value.to_bytes(byteCount(bitSize), 'little', signed=False)
+        #return value.to_bytes(byteCount(bitSize), 'little', signed=False)
+        return to_bytes(value, byteCount(bitSize), 'little', signed=False)
 
     @classmethod
     def fromBytes(cls, ba, bitSize):
-        return int.from_bytes(ba, 'little', signed=False)
-
+        #return int.from_bytes(ba, 'little', signed=False)
+        return from_bytes(ba, 'little', signed=False)
 
     @staticmethod
     def fromString(string, bitSize):
-        return int(string, 0)
+        return int(str(string), 0)
 
 
     @classmethod
@@ -108,22 +138,26 @@ class Int(Model):
     def toBytes(cls, value, bitSize):
         if (value < 0) and (bitSize < (byteCount(bitSize) * 8)):
             newValue = value & (2**(bitSize)-1) # Strip upper bits
-            ba = newValue.to_bytes(byteCount(bitSize), 'little', signed=False)
+            #ba = newValue.to_bytes(byteCount(bitSize), 'little', signed=False)
+            ba = to_bytes(newValue, byteCount(bitSize), 'little', signed=False)
         else:
-            ba = value.to_bytes(byteCount(bitSize), 'little', signed=True)
+            #ba = value.to_bytes(byteCount(bitSize), 'little', signed=True)
+            ba = to_bytes(value, byteCount(bitSize), 'little', signed=True)
 
         return ba
 
     @classmethod
     def fromBytes(cls,ba,bitSize):
         if (bitSize < (byteCount(bitSize)*8)):
-            value = int.from_bytes(ba, 'little', signed=False)
+            #value = int.from_bytes(ba, 'little', signed=False)
+            value = from_bytes(ba, 'little', signed=False)
 
             if value >= 2**(bitSize-1):
                 value -= 2**bitSize
 
         else:
-            value = int.from_bytes(ba, 'little', signed=True)
+            #value = int.from_bytes(ba, 'little', signed=True)
+            value = from_bytes(ba, 'little', signed=True)
 
         return value
 
@@ -151,11 +185,13 @@ class Bool(Model):
 
     @classmethod
     def toBytes(cls, value, bitSize):
-        return value.to_bytes(1, 'little', signed=False)
+        #return value.to_bytes(1, 'little', signed=False)
+        return to_bytes(value, 1, 'little', signed=False)
 
     @classmethod
     def fromBytes(cls, ba, bitSize):
-        return bool(int.from_bytes(ba, 'little', signed=False))
+        #return bool(int.from_bytes(ba, 'little', signed=False))
+        return bool(from_bytes(ba, 'little', signed=False))
 
     @staticmethod
     def fromString(string, bitSize):

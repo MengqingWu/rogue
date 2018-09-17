@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: future_fstrings -*-
 #-----------------------------------------------------------------------------
 # Title      : PyRogue base module - Root Class
 #-----------------------------------------------------------------------------
@@ -23,12 +24,14 @@ import Pyro4
 import Pyro4.naming
 import functools as ft
 import time
-import queue
+#import queue
+import Queue as queue
 from contextlib import contextmanager
 
 class RootLogHandler(logging.Handler):
     """ Class to listen to log entries and add them to syslog variable"""
-    def __init__(self,*, root):
+    #def __init__(self,*, root):
+    def __init__(self, root):
         logging.Handler.__init__(self)
         self._root = root
 
@@ -59,7 +62,8 @@ class Root(rogue.interfaces.stream.Master,pr.Device):
         """Root exit."""
         self.stop()
 
-    def __init__(self, *, name=None, description=''):
+    #def __init__(self, *, name=None, description=''):
+    def __init__(self, name=None, description=''):
         """Init the node with passed attributes"""
 
         rogue.interfaces.stream.Master.__init__(self)
@@ -235,7 +239,7 @@ class Root(rogue.interfaces.stream.Master,pr.Device):
     def getNode(self, path):
         return self._getPath(path)
 
-    @ft.lru_cache(maxsize=None)
+    #@ft.lru_cache(maxsize=None)
     def _getPath(self,path):
         """Find a node in the tree that has a particular path string"""
         obj = self
@@ -327,10 +331,10 @@ class Root(rogue.interfaces.stream.Master,pr.Device):
         obj = self.getNode(path)
         return obj.setDisp(value)
 
-    @Pyro4.expose
-    def exec(self,path,arg):
-        obj = self.getNode(path)
-        return obj.call(arg)
+#    @Pyro4.expose
+#    def exec(self,path,arg):
+#        obj = self.getNode(path)
+#        return obj.call(arg)
 
     @contextmanager
     def updateGroup(self):
@@ -495,7 +499,8 @@ class Root(rogue.interfaces.stream.Master,pr.Device):
 
 
 class PyroRoot(pr.PyroNode):
-    def __init__(self, *, node,daemon):
+    #def __init__(self, *, node,daemon):
+    def __init__(self, node,daemon):
         pr.PyroNode.__init__(self,root=self,node=node,daemon=daemon)
 
         self._varListeners   = []

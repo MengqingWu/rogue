@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: future_fstrings -*-
 #-----------------------------------------------------------------------------
 # Title      : PyRogue base module - Variable Class
 #-----------------------------------------------------------------------------
@@ -16,7 +17,6 @@
 import pyrogue as pr
 import textwrap
 import rogue.interfaces.memory
-import parse
 import Pyro4
 import math
 import inspect
@@ -29,7 +29,8 @@ class VariableError(Exception):
 
 class BaseVariable(pr.Node):
 
-    def __init__(self, *,
+    #def __init__(self, *,
+    def __init__(self,
                  name,
                  description='',
                  mode='RW',
@@ -333,7 +334,8 @@ class BaseVariable(pr.Node):
 @Pyro4.expose
 class RemoteVariable(BaseVariable):
 
-    def __init__(self, *,
+    #def __init__(self, *,
+    def __init__(self,
                  name,
                  description='',
                  mode='RW',
@@ -450,7 +452,8 @@ class RemoteVariable(BaseVariable):
 
 class LocalVariable(BaseVariable):
 
-    def __init__(self, *,
+    #def __init__(self, *,
+    def __init__(self,
                  name,
                  description='',
                  mode='RW',
@@ -534,7 +537,8 @@ class LocalVariable(BaseVariable):
 @Pyro4.expose
 class LinkVariable(BaseVariable):
 
-    def __init__(self, *,
+    #def __init__(self, *,
+    def __init__(self,
                  name,
                  variable=None,
                  dependencies=None,
@@ -632,17 +636,18 @@ def varFuncHelper(func,pargs,log,path):
     else:
 
         # Python functions
-        try:
-            # Function args
-            fargs = inspect.getfullargspec(func).args + \
-                    inspect.getfullargspec(func).kwonlyargs 
+        #try:
+        # Function args
+        fargs = inspect.getargspec(func).args
+        #fargs = inspect.getfullargspec(func).args + \
+        #        inspect.getfullargspec(func).kwonlyargs 
 
-            # Build overlapping arg list
-            args = {k:pargs[k] for k in fargs if k is not 'self' and k in pargs}
+        # Build overlapping arg list
+        args = {k:pargs[k] for k in fargs if k is not 'self' and k in pargs}
 
         # handle c++ functions, no args supported for now
-        except:
-            args = {}
+        #except:
+        #    args = {}
 
         return func(**args)
 

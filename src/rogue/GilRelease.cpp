@@ -48,9 +48,21 @@ void rogue::GilRelease::acquire() {
 
 void rogue::GilRelease::release() {
 #ifndef NO_PYTHON
+
+#ifdef PyGILState_Check
    if ( PyEval_ThreadsInitialized() && PyGILState_Check() ) 
       state_ = PyEval_SaveThread();
    else state_ = NULL;
+
+// Support python 2.7
+#else
+   if ( PyEval_ThreadsInitialized() ) {
+      PyThreadState * tstate = _PyThreadState_Current;
+      if ( tstate && (tstate == PyGILState_GetThisThreadState()) ) state_ = PyEval_SaveThread();
+      else state_ = NULL;
+   }
+   else state_ = NULL;
+#endif
 #endif
 }
 

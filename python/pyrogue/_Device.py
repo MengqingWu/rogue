@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: future_fstrings -*-
 #-----------------------------------------------------------------------------
 # Title      : PyRogue base module - Device Class
 #-----------------------------------------------------------------------------
@@ -25,7 +26,8 @@ import math
 import time
 
 class EnableVariable(pr.BaseVariable):
-    def __init__(self, *, enabled, deps):
+    #def __init__(self, *, enabled, deps):
+    def __init__(self, enabled, deps):
         pr.BaseVariable.__init__(
             self,
             description='Determines if device is enabled for hardware access',            
@@ -96,7 +98,8 @@ class DeviceError(Exception):
 class Device(pr.Node,rim.Hub):
     """Device class holder. TODO: Update comments"""
 
-    def __init__(self, *,
+    #def __init__(self, *,
+    def __init__(self,
                  name=None,
                  description='',
                  memBase=None,
@@ -506,7 +509,8 @@ class Device(pr.Node,rim.Hub):
 class DataWriter(Device):
     """Special base class to control data files. TODO: Update comments"""
 
-    def __init__(self, *, hidden=True, **kwargs):
+    #def __init__(self, *, hidden=True, **kwargs):
+    def __init__(self, hidden=True, **kwargs):
         """Initialize device class"""
 
         Device.__init__(self, hidden=hidden, **kwargs)
@@ -596,7 +600,8 @@ class DataWriter(Device):
 class RunControl(Device):
     """Special base class to control runs. TODO: Update comments."""
 
-    def __init__(self, *, hidden=True, rates=None, states=None, cmd=None, **kwargs):
+    #def __init__(self, *, hidden=True, rates=None, states=None, cmd=None, **kwargs):
+    def __init__(self, hidden=True, rates=None, states=None, cmd=None, **kwargs):
         """Initialize device class"""
 
         if rates is None:

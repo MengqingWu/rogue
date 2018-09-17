@@ -21,7 +21,6 @@ import inspect
 import pyrogue as pr
 import Pyro4
 import functools as ft
-import parse
 import collections
 
 def logInit(cls=None,name=None):
@@ -57,7 +56,8 @@ class Node(object):
     """
 
 
-    def __init__(self, *, name, description="", expand=True, hidden=False):
+    #def __init__(self, *, name, description="", expand=True, hidden=False):
+    def __init__(self, name, description="", expand=True, hidden=False):
         """Init the node with passed attributes"""
 
         # Public attributes
@@ -122,7 +122,8 @@ class Node(object):
             return ret
 
     def __dir__(self):
-        return(super().__dir__() + [k for k,v in self._nodes.items()])
+        #return(super().__dir__() + [k for k,v in self._nodes.items()])
+        return(dir(super(Node,self)) + [k for k,v in self._nodes.items()])
 
     def __contains__(self, item):
         return item in self._nodes.values()
@@ -302,7 +303,8 @@ class Node(object):
     def isCommand(self):
         return isinstance(self,pr.BaseCommand)
 
-    def find(self, *, recurse=True, typ=None, **kwargs):
+    #def find(self, *, recurse=True, typ=None, **kwargs):
+    def find(self, recurse=True, typ=None, **kwargs):
         """ 
         Find all child nodes that are a base class of 'typ'
         and whose properties match all of the kwargs.
@@ -401,7 +403,8 @@ class Node(object):
         pass
 
 class PyroNode(object):
-    def __init__(self, *, root, node, daemon):
+    #def __init__(self, *, root, node, daemon):
+    def __init__(self, root, node, daemon):
         self._root   = root
         self._node   = node
         self._daemon = daemon
@@ -417,7 +420,7 @@ class PyroNode(object):
             return ret
 
     def __dir__(self):
-        return(super().__dir__() + self._node.nodeList)
+        return(super(pr.Node).__dir__() + self._node.nodeList)
 
     def _convert(self,d):
         ret = odict()

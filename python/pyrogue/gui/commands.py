@@ -29,7 +29,8 @@ except ImportError:
 import pyrogue
 
 class CommandDev(QObject):
-    def __init__(self,*,tree,parent,dev,noExpand):
+    #def __init__(self,*,tree,parent,dev,noExpand):
+    def __init__(self,tree,parent,dev,noExpand):
         QObject.__init__(self)
         self._parent   = parent
         self._tree     = tree
@@ -76,7 +77,8 @@ class CommandDev(QObject):
 class CommandLink(QObject):
     """Bridge between the pyrogue tree and the display element"""
 
-    def __init__(self,*,tree,parent,command):
+    #def __init__(self,*,tree,parent,command):
+    def __init__(self,tree,parent,command):
         QObject.__init__(self)
         self._command = command
         self._parent  = parent
@@ -128,7 +130,8 @@ class CommandLink(QObject):
             self._command.call()
 
 class CommandWidget(QWidget):
-    def __init__(self, *, group, parent=None):
+    #def __init__(self, *, group, parent=None):
+    def __init__(self, group, parent=None):
         super(CommandWidget, self).__init__(parent)
 
         self.roots = []

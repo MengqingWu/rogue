@@ -43,7 +43,8 @@ class GuiTop(QWidget):
     newRoot = pyqtSignal(pyrogue.Root)
     newPyro = pyqtSignal(pyrogue.PyroRoot)
 
-    def __init__(self,*, group,parent=None):
+    #def __init__(self,*, group,parent=None):
+    def __init__(self, group,parent=None):
         super(GuiTop,self).__init__(parent)
 
         vb = QVBoxLayout()

@@ -27,7 +27,8 @@ class CommandError(Exception):
 
 class BaseCommand(pr.BaseVariable):
 
-    def __init__(self, *,
+    #def __init__(self, *,
+    def __init__(self,
                  name=None,
                  description="",
                  value=0,
@@ -159,7 +160,8 @@ LocalCommand = BaseCommand
 
 class RemoteCommand(BaseCommand, pr.RemoteVariable):
 
-    def __init__(self, *,
+    #def __init__(self, *,
+    def __init__(self,
                  name,
                  description='',
                  value=None,

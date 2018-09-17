@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: future_fstrings -*-
 #-----------------------------------------------------------------------------
 # Title      : PyRogue base module - Block Class
 #-----------------------------------------------------------------------------
@@ -21,11 +22,11 @@ import textwrap
 import pyrogue as pr
 import inspect
 
-
 class MemoryError(Exception):
     """ Exception for memory access errors."""
 
-    def __init__(self, *, name, address, error=0, msg=None, size=0):
+    #def __init__(self, *, name, address, error=0, msg=None, size=0):
+    def __init__(self, name, address, error=0, msg=None, size=0):
 
         self._value = f"Memory Error for {name} at address {address:#08x} "
 
@@ -65,7 +66,8 @@ class MemoryError(Exception):
 
 class BaseBlock(object):
 
-    def __init__(self, *, name, mode, device):
+    #def __init__(self, *, name, mode, device):
+    def __init__(self, name, mode, device):
 
         self._name      = name
         self._mode      = mode
@@ -144,7 +146,8 @@ class BaseBlock(object):
         pass
 
 class LocalBlock(BaseBlock):
-    def __init__(self, *, variable, localSet, localGet, value):
+    #def __init__(self, *, variable, localSet, localGet, value):
+    def __init__(self, variable, localSet, localGet, value):
         BaseBlock.__init__(self, name=variable.path, mode=variable.mode, device=variable.parent)
 
         self._localSet = localSet
@@ -203,10 +206,10 @@ class LocalBlock(BaseBlock):
             self.set(None, self.get(None) * other)
             self.updated()
 
-    def _imatmul(self, other):
-        with self._lock:
-            self.set(None, self.get(None) @ other)
-            self.updated()
+#    def _imatmul(self, other):
+#        with self._lock:
+#            self.set(None, self.get(None) @ other)
+#            self.updated()
 
     def _itruediv(self, other):
         with self._lock:
@@ -255,7 +258,8 @@ class LocalBlock(BaseBlock):
 
 
 class RemoteBlock(BaseBlock, rim.Master):
-    def __init__(self, *, offset, size, variables):
+    #def __init__(self, *, offset, size, variables):
+    def __init__(self, offset, size, variables):
      
         rim.Master.__init__(self)
         self._setSlave(variables[0].parent)

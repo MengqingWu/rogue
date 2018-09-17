@@ -47,10 +47,10 @@ endif()
 #####################################
 set(DO_PYTHON 0)
 
-find_package(PythonInterp 3.6)
+find_package(PythonInterp 2.7)
 
 if (PYTHONINTERP_FOUND)
-   find_package(PythonLibs 3.6)
+   find_package(PythonLibs 2.7)
 
    if (PYTHONLIBS_FOUND)
       set(DO_PYTHON 1)
@@ -67,7 +67,7 @@ set(BOOST_ROOT:PATHNAME $ENV{BOOST_PATH})
 
 # First try standard suffix for boost
 if (DO_PYTHON)
-find_package(Boost 1.58 COMPONENTS system thread python3)
+find_package(Boost 1.58 COMPONENTS system thread python)
 endif()
 
 # Next try Debian/Ubuntu suffix for boost

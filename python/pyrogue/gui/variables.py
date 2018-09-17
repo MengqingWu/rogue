@@ -32,7 +32,8 @@ import threading
 
 class VariableDev(QObject):
 
-    def __init__(self,*,tree,parent,dev,noExpand):
+    #def __init__(self,*,tree,parent,dev,noExpand):
+    def __init__(self,tree,parent,dev,noExpand):
         QObject.__init__(self)
         self._parent   = parent
         self._tree     = tree
@@ -79,7 +80,8 @@ class VariableLink(QObject):
 
     updateGui = pyqtSignal([int],[str])
 
-    def __init__(self,*,tree,parent,variable):
+    #def __init__(self,*,tree,parent,variable):
+    def __init__(self,tree,parent,variable):
         QObject.__init__(self)
         self._variable = variable
         self._lock     = threading.Lock()
@@ -186,7 +188,8 @@ class VariableLink(QObject):
 
 
 class VariableWidget(QWidget):
-    def __init__(self, *, group, parent=None):
+    #def __init__(self, *, group, parent=None):
+    def __init__(self, group, parent=None):
         super(VariableWidget, self).__init__(parent)
 
         self.roots = []

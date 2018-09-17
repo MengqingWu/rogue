@@ -1,3 +1,4 @@
+# -*- coding: future_fstrings -*-
 #-----------------------------------------------------------------------------
 # This file is part of the rogue software platform. It is subject to 
 # the license terms in the LICENSE.txt file found in the top-level directory 
@@ -7,11 +8,12 @@
 # copied, modified, propagated, or distributed except according to the terms 
 # contained in the LICENSE.txt file.
 #-----------------------------------------------------------------------------
+
 import sys
 
-MIN_PYTHON = (3,6)
-if sys.version_info < MIN_PYTHON:
-    raise Exception("Python %s.%s or later is required.\n" % MIN_PYTHON)
+#MIN_PYTHON = (3,6)
+#if sys.version_info < MIN_PYTHON:
+#    raise Exception("Python %s.%s or later is required.\n" % MIN_PYTHON)
 
 from pyrogue._Node      import *
 from pyrogue._Block     import *

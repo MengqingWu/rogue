@@ -38,7 +38,8 @@ class DataLink(QObject):
     updateFileSize   = pyqtSignal(str)
     updateFrameCount = pyqtSignal(str)
 
-    def __init__(self,*,layout,writer):
+    #def __init__(self,*,layout,writer):
+    def __init__(self,layout,writer):
         QObject.__init__(self)
         self.writer = writer
         self.block = False
@@ -237,7 +238,8 @@ class ControlLink(QObject):
     updateRate  = pyqtSignal(int)
     updateCount = pyqtSignal(str)
 
-    def __init__(self,*,layout,control):
+    #def __init__(self,*,layout,control):
+    def __init__(self,layout,control):
         QObject.__init__(self)
         self.control = control
         self.block = False
@@ -329,7 +331,8 @@ class SystemWidget(QWidget):
 
     updateLog = pyqtSignal(str)
 
-    def __init__(self, *, root, parent=None):
+    #def __init__(self, *, root, parent=None):
+    def __init__(self, root, parent=None):
         super(SystemWidget, self).__init__(parent)
 
         self.holders = []
