@@ -24,7 +24,8 @@ import time
 
 class UdpRssiPack(pr.Device):
 
-    def __init__(self,*,host,port,size=None, jumbo=False, wait=True, packVer=1, pollInterval=1, **kwargs):
+    #def __init__(self,*,host,port,size=None, jumbo=False, wait=True, packVer=1, pollInterval=1, **kwargs):
+    def __init__(self,host,port,size=None, jumbo=False, wait=True, packVer=1, pollInterval=1, **kwargs):
         super(self.__class__, self).__init__(**kwargs)
         self._host = host
         self._port = port

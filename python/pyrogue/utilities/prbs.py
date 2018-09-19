@@ -24,7 +24,8 @@ import pyrogue
 class PrbsRx(pyrogue.Device):
     """PRBS RX Wrapper"""
 
-    def __init__(self, *, name, width=None, taps=None, **kwargs ):
+    #def __init__(self, *, name, width=None, taps=None, **kwargs ):
+    def __init__(self, name, width=None, taps=None, **kwargs ):
 
         pyrogue.Device.__init__(self, name=name, description='PRBS Software Receiver', **kwargs)
         self._prbs = rogue.utilities.Prbs()
@@ -76,7 +77,8 @@ class PrbsRx(pyrogue.Device):
 class PrbsTx(pyrogue.Device):
     """PRBS TX Wrapper"""
 
-    def __init__(self, *, name, sendCount=False, width=None, taps=None, **kwargs ):
+    #def __init__(self, *, name, sendCount=False, width=None, taps=None, **kwargs ):
+    def __init__(self, name, sendCount=False, width=None, taps=None, **kwargs ):
 
         pyrogue.Device.__init__(self, name=name, description='PRBS Software Transmitter', **kwargs)
         self._prbs = rogue.utilities.Prbs()
