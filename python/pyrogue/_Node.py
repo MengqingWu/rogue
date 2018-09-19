@@ -61,10 +61,11 @@ class Node(object):
 
     def __init__(self, *, name, description="", expand=True, hidden=False):
         """Init the node with passed attributes"""
+        print(f'Node.__init__(name={name})')
 
         # Name cannot contain whitespace
-        if any(char in name for char in string.whitespace):
-            raise NodeError(f'Node name \"{name}\" cannot contain whitespace')
+        #if any(char in name for char in string.whitespace):
+        #    raise NodeError(f'Node name \"{name}\" cannot contain whitespace')
         
         # Public attributes
         self._name        = name
@@ -117,6 +118,7 @@ class Node(object):
         return self.path
 
     def __getattr__(self, name):
+        print(f'__getattr__({self}, {name})')
         if name in self._nodes:
             return self._nodes[name]
         else:
@@ -156,28 +158,28 @@ class Node(object):
             #If there is an index that can't parse to an int, don't try. Just add as the whole name"
             name = node.name
             
-        print(f"Adding {name}")
+        #print(f"Adding {name}")
 
         d = self._nodes
 
         for i,k in enumerate(name):
-            print(f'Add: i:{i}, k:{k}')
-            if not (isinstance(d, _NodeDict)):
+            #print(f'Add: i:{i}, k:{k}')
+            if not (isinstance(d, dict)): #_NodeDict
                 # If we hit somethign that is not a dict, its an object we already placed
                 raise NodeError(f'Error adding node with name {node.name} to {self.name}. Name collision.')
             
-            if isinstance(d, _NodeDict) and k not in d:
+            if isinstance(d, dict) and k not in d: #_NodeDict
                 # create a new dict at this level if it doesnt yet exist
                 d[k] = _NodeDict()
 
             # if not last, iterate down
             if i < len(name)-1:
-                print('Iterating down')
+                #print('Iterating down')
                 d = d[k]
             else:
                 # If we've put an empty dict here we can overwrite it with the node
                 if len(d[k]) == 0:
-                    print(f'Adding at {k}')                    
+                    #print(f'Adding at {k}')                    
                     d[k] = node
                 else:
                     raise NodeError(f'Error adding node with name {node.name} to {self.name}. Name collision.')
@@ -217,13 +219,7 @@ class Node(object):
         pass a class type to receive a certain type of node
         class type may be a string when called over Pyro4
         """
-        ret = _NodeDict()
-        for k, n in self._nodes.items():
-            if (n._isinstance(typ) and ((exc is None) or (not n._isinstance(exc))) and (hidden or n.hidden == False)):
-                ret[k] = n
-            if isinstance(n, _NodeDict):
-                ret[k] = n.getNodes(typ,exc,hidden)
-        return ret
+        return filter(self._nodes.items(), typ,exc,hidden)
 
     @Pyro4.expose
     @property
@@ -327,7 +323,8 @@ class Node(object):
 
     @Pyro4.expose
     def node(self, path):
-        return attrHelper(self._nodes,path)
+        return self._nodes[path]
+        #return attrHelper(self._nodes,path)
 
     @Pyro4.expose
     @property
@@ -350,32 +347,11 @@ class Node(object):
         and whose properties match all of the kwargs.
         For string properties, accepts regexes.
         """
+        return find(nodes=self._nodes.values(),
+                    recurse=recurse,
+                    typ=typ,
+                    **kwargs)
     
-        if typ is None:
-            typ = pr.Node
-
-        found = []
-        for node in self._nodes.values():
-            if isinstance(node, typ):
-                for prop, value in kwargs.items():
-                    if not hasattr(node, prop):
-                        break
-                    attr = getattr(node, prop)
-                    if isinstance(value, str):
-                        if not re.match(value, attr):
-                            break
-
-                    else:
-                        if inspect.ismethod(attr):
-                            attr = attr()
-                        if not value == attr:
-                            break
-                else:
-                    found.append(node)
-            if recurse:
-                found.extend(node.find(recurse=recurse, typ=typ, **kwargs))
-        return found
-
     def callRecursive(self, func, nodeTypes=None, **kwargs):
         # Call the function
         getattr(self, func)(**kwargs)
@@ -563,6 +539,58 @@ class _NodeDict(odict):
 
         # base case - normal lookup
         return dict.get(self, key)
+
+    def filter(self, typ, exc=None, hidden=True):
+        return filter(self.items(), typ, exc, hidden)
+        
+
+    def find(self, *, recurse=True, typ=None, **kwargs):
+        return find(nodes=self.values(),
+                    recurse=recurse,
+                    typ=typ,
+                    **kwargs)
+
+    def _rootAttached(self, parent, root):
+        for k,v in self.items():
+            v._rootAttached(parent, root)
+
+def filter(items, typ, exc=None, hidden=True):
+    ret = _NodeDict()
+    for k,n in items:
+        if isinstance(n, _NodeDict):
+            d = n.filter(typ,exc,hidden)
+            if d is not None and len(d) > 0:
+                ret[k] = d
+        elif (n._isinstance(typ) and ((exc is None) or (not n._isinstance(exc))) and (hidden or n.hidden == False)):
+            ret[k] = n
+    return ret
+    
+def find(*, nodes, recurse=True, typ=None, **kwargs):
+    if typ is None:
+        typ = pr.Node
+
+    found = []
+    for node in nodes:
+        #print(f'Found: {node}')
+        if isinstance(node, typ):
+            for prop, value in kwargs.items():
+                if not hasattr(node, prop):
+                    break
+                attr = getattr(node, prop)
+                if isinstance(value, str):
+                    if not re.match(value, attr):
+                        break
+
+                else:
+                    if inspect.ismethod(attr):
+                        attr = attr()
+                    if not value == attr:
+                        break
+            else:
+                found.append(node)
+        if recurse or isinstance(node, _NodeDict):
+            found.extend(node.find(recurse=recurse, typ=typ, **kwargs))
+    return found
 
 def flattenDict(d, func):
     for elem in getattr(d, func)():

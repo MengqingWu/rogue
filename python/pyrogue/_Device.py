@@ -153,15 +153,15 @@ class Device(pr.Node,rim.Hub):
                 # create Variable objects from a dict list
                 self.add(pr.Variable(**v) for v in variables)
 
-        cmds = sorted((d for d in (getattr(self, c) for c in dir(self)) if hasattr(d, 'PyrogueCommandArgs')),
-                      key=lambda x: x.PyrogueCommandOrder)
-        for cmd in cmds:
-            args = getattr(cmd, 'PyrogueCommandArgs')
-            if 'name' not in args:
-                args['name'] = cmd.__name__
+     #    cmds = sorted((d for d in (getattr(self, c) for c in dir(self)) if hasattr(d, 'PyrogueCommandArgs')),
+#                       key=lambda x: x.PyrogueCommandOrder)
+#         for cmd in cmds:
+#             args = getattr(cmd, 'PyrogueCommandArgs')
+#             if 'name' not in args:
+#                 args['name'] = cmd.__name__
 
-            print("Adding command {} using depcreated decorator. Please use __init__ decorators instead!".format(args['name']))
-            self.add(pr.LocalCommand(function=cmd, **args))
+#             print("Adding command {} using depcreated decorator. Please use __init__ decorators instead!".format(args['name']))
+#             self.add(pr.LocalCommand(function=cmd, **args))
 
     @Pyro4.expose
     @property
@@ -225,13 +225,13 @@ class Device(pr.Node,rim.Hub):
         if variables is None:
             print(f'hideVariables - {dir(self)}')
             print()
-            print(self.__dict__)
+            print(list(self.__dict__.keys()))
             variables=self.variables.values()
             
         for v in variables:
             if isinstance(v, pr.BaseVariable):
                 v._hidden = hidden;
-            elif isinstance(variables[0], str):
+            elif isinstance(v, str):
                 self.variables[v]._hidden = hidden
 
     def softReset(self):
@@ -457,8 +457,8 @@ class Device(pr.Node,rim.Hub):
             for var in match:
                 var._default = defValue
 
-        # Some variable initialization can run until the blocks are built
-        for v in self.variables.values():
+        # Some variable initialization can't run until the blocks are built
+        for v in pr.flattenDict(self.variables, 'values'):
             v._finishInit()
 
 
